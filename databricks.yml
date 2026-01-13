@@ -8,23 +8,24 @@ targets:
       host: https://e2-demo-field-eng.cloud.databricks.com
     
 resources:
+  clusters:
+    dev_cluster:
+      cluster_name: "multiwheel-dev-cluster"
+      spark_version: "17.3.x-scala2.13"
+      node_type_id: "i3.xlarge"
+      num_workers: 2
+      autotermination_minutes: 60
+  
   jobs:
     multiwheel_hello_job:
       name: "Multi-Wheel Hello Job"
       
       tasks:
         - task_key: run_wheel7_hello
-          job_cluster_key: main_cluster
+          existing_cluster_id: ${resources.clusters.dev_cluster.id}
           
           spark_python_task:
             python_file: ./src/run_hello.py
           
           libraries:
             - whl: ./dist/*.whl
-      
-      job_clusters:
-        - job_cluster_key: main_cluster
-          new_cluster:
-            spark_version: "13.3.x-scala2.12"
-            node_type_id: "i3.xlarge"
-            num_workers: 2
